@@ -6,53 +6,146 @@
 
 import React, { Component } from 'react';
 import {
-  Platform,
   StyleSheet,
+  View,
+  Button,
   Text,
-  View
+  TouchableOpacity
 } from 'react-native';
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
 
-type Props = {};
-export default class App extends Component<Props> {
+export default class App extends Component{
+
+  constructor(){
+    super()
+    this.state={
+      resultText: ""
+    }
+  }
+
+  calculateResult(){
+    const text = this.state.resultText
+  }
+
+  buttonPressed(text){
+    console.log(text)
+
+    if (text == '=') {
+      return this.calculateResult()
+    }
+
+    this.setState({
+      resultText:this.state.resultText + text
+    })
+  }
+
+  operate(operation){
+    switch (operation) {
+      case 'C':
+        let text = this.state.resultText.split('')
+        text.pop()
+        text.join('')
+        this.setState({
+          resultText:text.join('')
+        })
+    }
+  }
+
   render() {
+
+    let rows = []
+    let nums = [[1,2,3],[4,5,6],[7,8,9],['.','0','=']]
+    for (let i = 0; i < 4; i++) {
+      let row = []
+      for (let j = 0; j < 3; j++) {
+          row.push(<TouchableOpacity onPress={() => this.buttonPressed(nums[i][j])} style={styles.btn}>
+            <Text style = {styles.btnText}>{nums[i][j]}</Text>
+          </TouchableOpacity>)
+      }
+      rows.push(<View style={styles.row}>{row}</View>)
+    }
+
+    let operations=['C','+','-','*','/']
+    let ops = []
+    for (let k = 0; k < 5; k++) {
+      ops.push(<TouchableOpacity onPress={() => this.operate(operations[k])} style={styles.btn}>
+        <Text style = {[styles.btnText,styles.white]}>{operations[k]}</Text>
+      </TouchableOpacity>)
+    }
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit App.js
-        </Text>
-        <Text style={styles.instructions}>
-          {instructions}
-        </Text>
+        <View style={styles.result}>
+          <Text style={styles.resultText}>
+          {this.state.resultText}</Text>
+        </View>
+        <View style={styles.calculation}>
+          <Text style={styles.calculationText}>121</Text>
+        </View>
+        <View style={styles.keypad}>
+          <View style={styles.numberKeypad}>
+            {rows}
+          </View>
+          <View style={styles.operatorKeypad}>
+            {ops}
+          </View>
+        </View>
       </View>
-    );
+    );eeqa
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+  container:{
+    flex:1,
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
+  resultText:{
+    fontSize:60,
+    color:'black'
   },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
+  calculationText:{
+    fontSize:40,
+    color:'grey'
   },
-});
+  row:{
+    flexDirection:'row',
+    flex:1,
+    justifyContent:'space-around',
+    alignItems:'center'
+  },
+  result: {
+    flex: 2,
+    justifyContent:'center',
+    alignItems:'flex-end'
+  },
+  calculation:{
+    flex:1,
+    justifyContent:'center',
+    alignItems:'flex-end'
+  },
+  keypad: {
+    flexGrow: 6,
+    flexDirection:'row'
+  },
+  numberKeypad:{
+    flex:3,
+    backgroundColor:'red'
+  },
+  btnText:{
+    fontSize:30
+  },
+  white:{
+    color:'#fff'
+  },
+  btn:{
+    flex:1,
+    alignItems:'center',
+    alignSelf:'stretch',
+    justifyContent:'center'
+  },
+  operatorKeypad:{
+    flex:1,
+    justifyContent:'space-around',
+    alignItems:'stretch',
+    backgroundColor:'black'
+  }
+})
